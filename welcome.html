@@ -54,21 +54,61 @@ button:hover{
 
 <h2>학생 정보</h2>
 
-<input type="text" placeholder="이름">
+<form
+  id="studentForm"
+  https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec
+  method="POST"
+  target="saveFrame"
+  onsubmit="return startMission();"
+>
+  <input
+    id="studentName"
+    name="name"
+    type="text"
+    placeholder="이름"
+    required
+  >
 
-<input type="text" placeholder="학년">
+  <input
+    id="studentGrade"
+    name="grade"
+    type="text"
+    placeholder="학년"
+    required
+  >
 
-<select>
-<option>체험</option>
-<option>1개월 무료</option>
-<option>정규 등록</option>
-</select>
+  <select name="registrationType" required>
+    <option value="체험">체험</option>
+    <option value="1개월 무료">1개월 무료</option>
+    <option value="정규 등록">정규 등록</option>
+  </select>
 
-<br>
+  <br>
 
-<button onclick="location.href='emma-test.html'">
-START
-</button>
+  <button id="startButton" type="submit">
+    START
+  </button>
+</form>
+
+<iframe
+  name="saveFrame"
+  style="display:none;"
+></iframe>
+
+<script>
+function startMission() {
+  const button = document.getElementById("startButton");
+
+  button.disabled = true;
+  button.textContent = "등록 중...";
+
+  setTimeout(function () {
+    window.location.href = "emma-test.html";
+  }, 2000);
+
+  return true;
+}
+</script>
 
 </div>
 
