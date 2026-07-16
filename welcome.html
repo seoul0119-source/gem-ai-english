@@ -347,39 +347,34 @@
     window.addEventListener(
       "message",
       function (event) {
-        if (
-          event.source !== iframe.contentWindow
-        ) {
-          return;
-        }
+     window.addEventListener(
+  "message",
+  function (event) {
+    const result = event.data;
 
-        const result = event.data;
+    if (
+      !result ||
+      typeof result !== "object" ||
+      typeof result.success !== "boolean"
+    ) {
+      return;
+    }
 
-        if (
-          !result ||
-          typeof result !== "object" ||
-          typeof result.success !== "boolean"
-        ) {
-          return;
-        }
+    window.clearTimeout(timeoutId);
 
-        window.clearTimeout(timeoutId);
+    if (!result.success) {
+      registrationInProgress = false;
 
-        if (!result.success) {
-          registrationInProgress = false;
+      startButton.disabled = false;
+      startButton.textContent = "다시 시도";
 
-          startButton.disabled = false;
-          startButton.textContent = "다시 시도";
+      showError(
+        result.message ||
+        "학생 정보를 저장하지 못했습니다."
+      );
 
-          showError(
-            result.message ||
-            "학생 정보를 저장하지 못했습니다."
-          );
-
-          return;
-        }
-
-        statusMessage.className =
+      return;
+    }
           "status-success";
 
         statusMessage.textContent =
