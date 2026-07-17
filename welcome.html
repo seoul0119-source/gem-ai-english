@@ -296,9 +296,8 @@
     let registrationInProgress = false;
     let timeoutId = null;
 
-    const WEB_APP_URL =
-  "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
-
+    form.action = WEB_APP_URL;
+    
     form.addEventListener("submit", function () {
       if (registrationInProgress) {
         return false;
