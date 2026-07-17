@@ -324,6 +324,9 @@
   });
 
   window.addEventListener("message", function (event) {
+
+    console.log("메시지 수신:", event.origin, event.data);
+
     const result = event.data;
 
     if (
