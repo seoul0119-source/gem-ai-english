@@ -345,86 +345,86 @@
     });
 
     window.addEventListener(
-      "message",
-      function (event) {
-        if (
-          event.source !== iframe.contentWindow
-        ) {
-          return;
-        }
-
-        const result = event.data;
-
-        if (
-          !result ||
-          typeof result !== "object" ||
-          typeof result.success !== "boolean"
-        ) {
-          return;
-        }
-
-        window.clearTimeout(timeoutId);
-
-        if (!result.success) {
-          registrationInProgress = false;
-
-          startButton.disabled = false;
-          startButton.textContent = "다시 시도";
-
-          showError(
-            result.message ||
-            "학생 정보를 저장하지 못했습니다."
-          );
-
-          return;
-        }
-
-        statusMessage.className =
-          "status-success";
-
-        statusMessage.textContent =
-          `등록 완료! 학생 ID: ${result.studentId}`;
-
-        localStorage.setItem(
-          "gemStudentId",
-          result.studentId
-        );
-
-        localStorage.setItem(
-          "gemStudentName",
-          result.name
-        );
-
-        localStorage.setItem(
-          "gemRegistrationType",
-          result.registrationType
-        );
-
-        const nextUrl =
-          new URL(
-            EMMA_PAGE,
-            window.location.href
-          );
-
-        nextUrl.searchParams.set(
-          "studentId",
-          result.studentId
-        );
-
-        nextUrl.searchParams.set(
-          "name",
-          result.name
-        );
-
-        window.setTimeout(
-          function () {
-            window.location.href =
-              nextUrl.toString();
-          },
-          1200
-        );
-      }
+  "message",
+  function (event) {
+    console.log(
+      "Apps Script 메시지 수신:",
+      event.origin,
+      event.data
     );
+
+    const result = event.data;
+
+    if (
+      !result ||
+      typeof result !== "object" ||
+      typeof result.success !== "boolean"
+    ) {
+      return;
+    }
+
+    window.clearTimeout(timeoutId);
+
+    if (!result.success) {
+      registrationInProgress = false;
+
+      startButton.disabled = false;
+      startButton.textContent = "다시 시도";
+
+      showError(
+        result.message ||
+        "학생 정보를 저장하지 못했습니다."
+      );
+
+      return;
+    }
+
+    statusMessage.className =
+      "status-success";
+
+    statusMessage.textContent =
+      `등록 완료! 학생 ID: ${result.studentId}`;
+
+    localStorage.setItem(
+      "gemStudentId",
+      result.studentId
+    );
+
+    localStorage.setItem(
+      "gemStudentName",
+      result.name
+    );
+
+    localStorage.setItem(
+      "gemRegistrationType",
+      result.registrationType
+    );
+
+    const nextUrl =
+      new URL(
+        EMMA_PAGE,
+        window.location.href
+      );
+
+    nextUrl.searchParams.set(
+      "studentId",
+      result.studentId
+    );
+
+    nextUrl.searchParams.set(
+      "name",
+      result.name
+    );
+
+    window.setTimeout(
+      function () {
+        window.location.href =
+          nextUrl.toString();
+      },
+      1200
+    );
+  }
+);
 
     function showError(message) {
       statusMessage.className =
