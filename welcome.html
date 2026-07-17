@@ -276,7 +276,7 @@
      * 아래 따옴표 안에 붙여 넣으세요.
      */
     const WEB_APP_URL =
-      "여기에_APPS_SCRIPT_웹앱_URL";
+  "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
 
     const EMMA_PAGE =
       "emma-test.html";
@@ -296,7 +296,8 @@
     let registrationInProgress = false;
     let timeoutId = null;
 
-    form.action = WEB_APP_URL;
+    const WEB_APP_URL =
+  "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
 
     form.addEventListener("submit", function () {
       if (registrationInProgress) {
