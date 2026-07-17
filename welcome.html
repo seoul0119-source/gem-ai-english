@@ -272,7 +272,7 @@
 
  <script>
   const WEB_APP_URL =
-   "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
+    "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
 
   const EMMA_PAGE = "emma-test.html";
 
@@ -324,9 +324,6 @@
   });
 
   window.addEventListener("message", function (event) {
-
-    console.log("메시지 수신:", event.origin, event.data);
-
     const result = event.data;
 
     if (
