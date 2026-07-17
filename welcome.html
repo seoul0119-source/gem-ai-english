@@ -270,130 +270,168 @@
     ></iframe>
   </main>
 
- <script>
-  const WEB_APP_URL =
-    "https://script.google.com/macros/s/AKfycbyWYSrtfORZHG-DnpFHVP18OCQVKqon-yJxDpDNDr_tL0VgSmx1M_mvv5h7Icw1ho1dDA/exec";
+  <script>
+    /*
+     * Apps Script의 /exec 웹앱 URL을
+     * 아래 따옴표 안에 붙여 넣으세요.
+     */
+    const WEB_APP_URL =
+      "https://script.google.com/macros/s/AKfycbz6LIvJEhy9KXQbpTghGRaAXtjL03HltJF7Lb4leU6v_q0bkoBsjMkhN-Q8laeT27zDdQ/exec";
 
-  const EMMA_PAGE = "emma-test.html";
+    const EMMA_PAGE =
+      "emma-test.html";
 
-  const form = document.getElementById("studentForm");
-  const startButton = document.getElementById("startButton");
-  const statusMessage = document.getElementById("statusMessage");
+    const form =
+      document.getElementById("studentForm");
 
-  let registrationInProgress = false;
-  let timeoutId = null;
+    const iframe =
+      document.getElementById("saveFrame");
 
-  form.action = WEB_APP_URL;
+    const startButton =
+      document.getElementById("startButton");
 
-  form.addEventListener("submit", function (event) {
-    if (registrationInProgress) {
-      event.preventDefault();
-      return;
-    }
+    const statusMessage =
+      document.getElementById("statusMessage");
 
-    if (
-      !WEB_APP_URL.startsWith(
-        "https://script.google.com/macros/s/"
-      ) ||
-      !WEB_APP_URL.endsWith("/exec")
-    ) {
-      event.preventDefault();
-      showError("Apps Script 웹앱 주소가 올바르지 않습니다.");
-      return;
-    }
+    let registrationInProgress = false;
+    let timeoutId = null;
 
-    registrationInProgress = true;
+    form.action = WEB_APP_URL;
 
-    startButton.disabled = true;
-    startButton.textContent = "등록 중...";
+    form.addEventListener("submit", function () {
+      if (registrationInProgress) {
+        return false;
+      }
 
-    statusMessage.className = "status-processing";
-    statusMessage.textContent =
-      "학생 정보를 안전하게 저장하고 있습니다.";
+      if (
+        !WEB_APP_URL.startsWith(
+          "https://script.google.com/macros/s/"
+        ) ||
+        !WEB_APP_URL.endsWith("/exec")
+      ) {
+        showError(
+          "Apps Script 웹앱 주소가 설정되지 않았습니다."
+        );
 
-    timeoutId = window.setTimeout(function () {
-      registrationInProgress = false;
+        return false;
+      }
 
-      startButton.disabled = false;
-      startButton.textContent = "다시 시도";
+      registrationInProgress = true;
 
-      showError(
-        "저장 응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요."
-      );
-    }, 20000);
-  });
+      startButton.disabled = true;
+      startButton.textContent = "등록 중...";
 
-  window.addEventListener("message", function (event) {
-    const result = event.data;
+      statusMessage.className =
+        "status-processing";
 
-    if (
-      !result ||
-      typeof result !== "object" ||
-      typeof result.success !== "boolean"
-    ) {
-      return;
-    }
+      statusMessage.textContent =
+        "학생 정보를 안전하게 저장하고 있습니다.";
 
-    window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(
+        function () {
+          registrationInProgress = false;
 
-    if (!result.success) {
-      registrationInProgress = false;
+          startButton.disabled = false;
+          startButton.textContent = "다시 시도";
 
-      startButton.disabled = false;
-      startButton.textContent = "다시 시도";
-
-      showError(
-        result.message ||
-        "학생 정보를 저장하지 못했습니다."
+          showError(
+            "저장 응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요."
+          );
+        },
+        20000
       );
 
-      return;
+      return true;
+    });
+
+    window.addEventListener(
+      "message",
+      function (event) {
+        if (
+          event.source !== iframe.contentWindow
+        ) {
+          return;
+        }
+
+        const result = event.data;
+
+        if (
+          !result ||
+          typeof result !== "object" ||
+          typeof result.success !== "boolean"
+        ) {
+          return;
+        }
+
+        window.clearTimeout(timeoutId);
+
+        if (!result.success) {
+          registrationInProgress = false;
+
+          startButton.disabled = false;
+          startButton.textContent = "다시 시도";
+
+          showError(
+            result.message ||
+            "학생 정보를 저장하지 못했습니다."
+          );
+
+          return;
+        }
+
+        statusMessage.className =
+          "status-success";
+
+        statusMessage.textContent =
+          `등록 완료! 학생 ID: ${result.studentId}`;
+
+        localStorage.setItem(
+          "gemStudentId",
+          result.studentId
+        );
+
+        localStorage.setItem(
+          "gemStudentName",
+          result.name
+        );
+
+        localStorage.setItem(
+          "gemRegistrationType",
+          result.registrationType
+        );
+
+        const nextUrl =
+          new URL(
+            EMMA_PAGE,
+            window.location.href
+          );
+
+        nextUrl.searchParams.set(
+          "studentId",
+          result.studentId
+        );
+
+        nextUrl.searchParams.set(
+          "name",
+          result.name
+        );
+
+        window.setTimeout(
+          function () {
+            window.location.href =
+              nextUrl.toString();
+          },
+          1200
+        );
+      }
+    );
+
+    function showError(message) {
+      statusMessage.className =
+        "status-error";
+
+      statusMessage.textContent = message;
     }
-
-    statusMessage.className = "status-success";
-    statusMessage.textContent =
-      `등록 완료! 학생 ID: ${result.studentId}`;
-
-    localStorage.setItem(
-      "gemStudentId",
-      result.studentId
-    );
-
-    localStorage.setItem(
-      "gemStudentName",
-      result.name
-    );
-
-    localStorage.setItem(
-      "gemRegistrationType",
-      result.registrationType
-    );
-
-    const nextUrl = new URL(
-      EMMA_PAGE,
-      window.location.href
-    );
-
-    nextUrl.searchParams.set(
-      "studentId",
-      result.studentId
-    );
-
-    nextUrl.searchParams.set(
-      "name",
-      result.name
-    );
-
-    window.setTimeout(function () {
-      window.location.href = nextUrl.toString();
-    }, 1200);
-  });
-
-  function showError(message) {
-    statusMessage.className = "status-error";
-    statusMessage.textContent = message;
-  }
-</script>
-  
+  </script>
 </body>
 </html>
